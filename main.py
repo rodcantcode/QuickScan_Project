@@ -34,13 +34,22 @@ combined_times = []
 current_time = ""
 for word in words:
     print(word)
-    if any(char.isdigit() for char in word) or word.lower() in ["a.m.", "p.m."] and not re.match(r'\d{1,2}/\d{1,2}', word):
-        current_time += " " + word
+    if not re.match(r'\d{1,2}/\d{1,2}', word) and any(char.isdigit() for char in word) or word.lower() in ["a.m.", "p.m."]:
+        current_time += word
     else:
         if current_time:
             combined_times.append(current_time.strip())
             current_time = ""
+    if re.match(r'\d{1,2}/\d{1,2}', word):
+        combined_times.append(word)
 print(combined_times)
+
+
+   
+        
+
+'''
+
 
 
 for time in combined_times:
@@ -48,10 +57,11 @@ for time in combined_times:
         #print(time)
         if not current_start_time:
             current_start_time = time
-   
-        
 
-'''
+
+
+
+
 #Draws Boxes on Image where text is detected
 n_boxes = len(d['text'])
 for i in range(n_boxes):
