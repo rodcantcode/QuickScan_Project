@@ -1,17 +1,12 @@
 import pytesseract
 import re
 import cv2
-import numpy as np
-from pytesseract import Output
 
 #Image input
 image_path = 'data/workschedule.jpg'
 img = cv2.imread(image_path)
-d = pytesseract.image_to_data(img, output_type=Output.DICT)
 
-#List for all text results 
-textResults = []
-
+#Dictionary to store all 
 shifts_dict = {}
 
 # Convert the image to grayscale
@@ -42,39 +37,20 @@ for word in words:
             current_time = ""
     if re.match(r'\d{1,2}/\d{1,2}', word):
         combined_times.append(word)
-print(combined_times)
 
-
-   
-        
-
-'''
-
-
+#print(combined_times)
 
 for time in combined_times:
-    if (any(char.isdigit() for char in time) or time.lower() in ["a.m.", "p.m."]) and not re.match(r'\d{1,2}/\d{1,2}', time):
-        #print(time)
+    if not re.match(r'\d{1,2}/\d{1,2}', time):
         if not current_start_time:
             current_start_time = time
+        else:
+            current_end_time = time
+    else:
+        current_date = time
+        shifts_dict[current_date] = {'start_time': current_start_time, 'end_time': current_end_time}
 
-
-
-
-
-#Draws Boxes on Image where text is detected
-n_boxes = len(d['text'])
-for i in range(n_boxes):
-    if int(d['conf'][i]) > 0:
-        (x, y, w, h) = (d['left'][i], d['top'][i], d['width'][i], d['height'][i])
-        img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        textResults.append(d['text'][i])
-print(textResults)
-#cv2.imshow('img', img)
-#cv2.waitKey(0)
-
-if current_start_time == None:
-        current_start_time = word
-        print(current_start_time)
         current_start_time = None
-'''
+        current_end_time = None
+   
+print(shifts_dict)
