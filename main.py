@@ -1,6 +1,15 @@
 import pytesseract
 import re
 import cv2
+import datetime as dt
+import os.path
+
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
 
 #Image input
 image_path = 'data/workschedule.jpg'
@@ -48,9 +57,54 @@ for time in combined_times:
             current_end_time = time
     else:
         current_date = time
-        shifts_dict[current_date] = {'start_time': current_start_time, 'end_time': current_end_time}
+        shifts_dict[current_date] = current_start_time, current_end_time
 
         current_start_time = None
         current_end_time = None
    
 print(shifts_dict)
+
+for date,time in zip(shifts_dict.keys(), shifts_dict.values()):
+    print(date,time[0])
+
+
+
+#GOOGLE API
+
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
+
+
+def main():
+    creds = None
+
+    if os.path.exists("token.json"):
+        creds = Credentials.from_authorized_user_file("token.json")
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+            creds = flow.run_local_server(port=0)
+    
+        with open("token.json", "w") as token:
+            token.write(creds.to_json())
+
+    try:
+        service = build("calendar", "v3", credentials=creds)
+        
+        for key in shifts_dict:
+
+            event = {
+                'summary': 'Cashier',
+                'location': 'Publix Super Market at Lake Ella Plaza, 1700 N Monroe St, Tallahassee, FL 32303, USA',
+                'description': 'Break: ',
+            }
+
+
+
+
+
+
+    except HttpError as error:
+        print("An error occurerd: ", error)
