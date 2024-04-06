@@ -13,7 +13,7 @@ from googleapiclient.errors import HttpError
 
 
 #Image input
-image_path = 'data/workschedule.jpg'
+image_path = 'data/workschedule6.jpg'
 img = cv2.imread(image_path)
 
 #Dictionary to store all 
@@ -95,11 +95,11 @@ def main():
                     'description': 'Break: ',
                     'start': {
                         'dateTime' : f'{date}T{time[0]}:00',
-                        'timeZone' : 'GMT-5:00'
+                        'timeZone' : 'GMT-4:00'
                     },
                     'end': {
                         'dateTime' : f'{date}T{time[1]}:00',
-                        'timeZone' : 'GMT-5:00'
+                        'timeZone' : 'GMT-4:00'
                     }
                 }
                 event = service.events().insert(calendarId='85r1j11m1vc3983imhkpi44j1c@group.calendar.google.com', body=event).execute()
